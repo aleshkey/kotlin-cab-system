@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class PassengerServiceApplication
 
 fun main(args: Array<String>) {
-	runApplication<PassengerServiceApplication>(*args)
+    runApplication<PassengerServiceApplication>(*args)
 }

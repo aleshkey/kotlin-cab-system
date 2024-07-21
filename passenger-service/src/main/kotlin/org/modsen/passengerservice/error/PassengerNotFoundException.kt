@@ -1,4 +1,5 @@
 package org.modsen.passengerservice.error
 
-class PassengerNotFoundException(message: String?) : RuntimeException(message) {
-}
+class PassengerNotFoundException(
+    id: Long?,
+) : RuntimeException("Cant find passenger with id: $id")

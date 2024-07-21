@@ -1,5 +1,6 @@
 package org.modsen.passengerservice.service.impl
 
+import org.modsen.passengerservice.error.EmailAlreadyRegistered
 import org.modsen.passengerservice.error.PassengerNotFoundException
 import org.modsen.passengerservice.mapper.PassengerMapper
 import org.modsen.passengerservice.model.Passenger
@@ -39,12 +40,20 @@ class PassengerServiceImpl(
 
     private fun findById(id: Long): Passenger =
         passengerRepository.findById(id)
-            .orElseThrow{ PassengerNotFoundException("Cant find passenger with id: $id") }
+            .orElseThrow{ PassengerNotFoundException(id) }
+
+    private fun checkEmail(email: String) {
+        if (passengerRepository.existsByEmail(email)){
+            throw EmailAlreadyRegistered(email)
+        }
+    }
 
     override fun getAll(pageParams: PageParams): PassengerPageResponse {
-        val content: List<PassengerResponse> = passengerRepository.findAll(createPageable(pageParams))
-            .content
-            .map { passengerMapper.objToResponse(it) }
+        val content: List<PassengerResponse> = passengerMapper.listObjToListResponse(
+            passengerRepository
+                .findAll(createPageable(pageParams))
+                .content
+        )
         return PassengerPageResponse(
                 pageParams = pageParams,
                 content    = content
@@ -52,6 +61,7 @@ class PassengerServiceImpl(
     }
 
     override fun savePassenger(passengerRequest: PassengerRequest): PassengerResponse {
+        checkEmail(passengerRequest.email)
         val passengerToSave = passengerMapper.requestToObj(passengerRequest)
         val res = passengerRepository.save(passengerToSave)
         return passengerMapper.objToResponse(res)
@@ -63,9 +73,13 @@ class PassengerServiceImpl(
         )
 
     override fun updateById(id: Long, passengerRequest: PassengerRequest) : PassengerResponse {
-        val passengerToSave = passengerMapper.requestToObj(passengerRequest)
-        passengerToSave.id = id
-        val res = passengerRepository.save(passengerToSave)
+        val passengerToUpdate = passengerMapper.requestToObj(passengerRequest)
+        val passengerInDb = findById(id)
+        if (passengerInDb.email != passengerToUpdate.email){
+            checkEmail(passengerToUpdate.email)
+        }
+        passengerToUpdate.id = id
+        val res = passengerRepository.save(passengerToUpdate)
         return passengerMapper.objToResponse(res)
     }
 

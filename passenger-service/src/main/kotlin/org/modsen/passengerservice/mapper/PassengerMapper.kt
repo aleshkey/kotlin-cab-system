@@ -7,9 +7,9 @@ import org.modsen.passengerservice.payload.response.PassengerResponse
 
 @Mapper
 interface PassengerMapper {
-
     fun objToResponse(passenger: Passenger): PassengerResponse
 
     fun requestToObj(passengerRequest: PassengerRequest): Passenger
 
+    fun listObjToListResponse(passengers: List<Passenger>): List<PassengerResponse>
 }
