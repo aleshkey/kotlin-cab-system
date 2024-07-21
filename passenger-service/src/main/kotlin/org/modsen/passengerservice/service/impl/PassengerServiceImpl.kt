@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.validation.annotation.Validated
 
 @Service
 class PassengerServiceImpl(
@@ -61,7 +62,7 @@ class PassengerServiceImpl(
     }
 
     override fun savePassenger(passengerRequest: PassengerRequest): PassengerResponse {
-        checkEmail(passengerRequest.email)
+        checkEmail(passengerRequest.email!!)
         val passengerToSave = passengerMapper.requestToObj(passengerRequest)
         val res = passengerRepository.save(passengerToSave)
         return passengerMapper.objToResponse(res)

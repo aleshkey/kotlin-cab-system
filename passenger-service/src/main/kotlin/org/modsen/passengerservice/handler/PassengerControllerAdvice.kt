@@ -1,5 +1,6 @@
 package org.modsen.passengerservice.handler
 
+import jakarta.validation.ConstraintViolationException
 import org.modsen.passengerservice.error.EmailAlreadyRegistered
 import org.modsen.passengerservice.error.PassengerNotFoundException
 import org.modsen.passengerservice.payload.general.ErrorResponse
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.util.*
+import kotlin.collections.HashMap
 
 @RestControllerAdvice
 class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
     @ExceptionHandler
-    fun handleGenericException(ex: Exception): ResponseEntity<ErrorResponse> {
-        println(ex.javaClass)
-        return ResponseEntity
+    fun handleGenericException(ex: Exception): ResponseEntity<ErrorResponse> =
+        ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(
                 ErrorResponse(
@@ -29,9 +30,8 @@ class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
                     status = HttpStatus.INTERNAL_SERVER_ERROR,
                     message = "Something went wrong!",
                     timestamp = Date(),
-                ),
+                )
             )
-    }
 
     @ExceptionHandler
     fun handleDataIntegrityViolationException(ex: EmailAlreadyRegistered): ResponseEntity<ErrorResponse> =
@@ -43,7 +43,7 @@ class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
                     status = HttpStatus.CONFLICT,
                     message = ex.message!!,
                     timestamp = Date(),
-                ),
+                )
             )
 
     @ExceptionHandler
@@ -57,7 +57,7 @@ class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
                     status = status,
                     message = ex.message!!,
                     timestamp = Date(),
-                ),
+                )
             )
     }
 
@@ -72,33 +72,33 @@ class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
                     status = status,
                     message = "There is no field '${ex.propertyName}'",
                     timestamp = Date(),
-                ),
+                )
             )
     }
 
-    override fun handleMethodArgumentNotValid(
+    override fun handleMethodArgumentNotValid (
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
         status: HttpStatusCode,
         request: WebRequest,
     ): ResponseEntity<Any> {
         val statusCode = HttpStatus.BAD_REQUEST
-        val errors =
-            ex.bindingResult.allErrors
-                .map { error ->
-                    val fieldError = error as FieldError
-                    "${fieldError.field}: ${fieldError.defaultMessage}"
-                }.joinToString(", ")
-
+        val errorMap = HashMap<String, String>()
+        ex.bindingResult.allErrors
+            .map { error ->
+                val fieldError = error as FieldError
+                errorMap.put(fieldError.field, fieldError.defaultMessage.toString())
+            }
         return ResponseEntity
             .status(statusCode)
             .body(
                 ErrorResponse(
                     code = statusCode.value(),
                     status = statusCode,
-                    message = errors,
+                    message = errorMap.toString(),
                     timestamp = Date(),
                 ),
             )
     }
+
 }

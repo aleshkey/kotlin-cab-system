@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/passengers")
-@Slf4j
-@Validated
 class PassengerController(
     private val passengerService: PassengerService,
 ) {
@@ -29,7 +27,7 @@ class PassengerController(
 
     @PostMapping
     fun savePassenger(
-        @Valid @RequestBody passengerRequest: PassengerRequest,
+        @RequestBody @Valid passengerRequest: PassengerRequest,
     ): ResponseEntity<PassengerResponse> =
         ResponseEntity
             .status(HttpStatus.CREATED)
@@ -46,7 +44,7 @@ class PassengerController(
     @PutMapping("/{id}")
     fun updateById(
         @PathVariable id: Long,
-        @Valid @RequestBody passengerRequest: PassengerRequest,
+        @RequestBody @Valid passengerRequest: PassengerRequest,
     ): ResponseEntity<PassengerResponse> =
         ResponseEntity
             .status(HttpStatus.OK)
