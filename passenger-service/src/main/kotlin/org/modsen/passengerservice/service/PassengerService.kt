@@ -18,4 +18,5 @@ interface PassengerService {
     fun updateById (id: Long, passengerRequest: PassengerRequest) : PassengerResponse
 
     fun deleteById(id: Long) : PassengerResponse
+
 }

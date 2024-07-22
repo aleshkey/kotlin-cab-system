@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:no-wildcard-imports")
-
 package org.modsen.passengerservice.model
 
 import jakarta.persistence.*
@@ -15,6 +13,4 @@ data class Passenger(
     @Column(name = "last_name")
     var lastName: String = "",
     var email: String = "",
-) {
-    override fun toString(): String = "Passenger(id=$id, firstName='$firstName', lastName='$lastName', email='$email')"
-}
+)

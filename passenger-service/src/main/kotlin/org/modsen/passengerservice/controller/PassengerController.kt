@@ -1,9 +1,7 @@
-@file:Suppress("ktlint:standard:no-wildcard-imports")
-
 package org.modsen.passengerservice.controller
 
 import jakarta.validation.Valid
-import lombok.extern.slf4j.Slf4j
+import org.modsen.passengerservice.constants.EndpointConstants
 import org.modsen.passengerservice.payload.general.PageParams
 import org.modsen.passengerservice.payload.request.PassengerRequest
 import org.modsen.passengerservice.payload.response.PassengerPageResponse
@@ -11,11 +9,10 @@ import org.modsen.passengerservice.payload.response.PassengerResponse
 import org.modsen.passengerservice.service.PassengerService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/passengers")
+@RequestMapping(EndpointConstants.MAIN_PAGE)
 class PassengerController(
     private val passengerService: PassengerService,
 ) {
@@ -33,7 +30,7 @@ class PassengerController(
             .status(HttpStatus.CREATED)
             .body(passengerService.savePassenger(passengerRequest))
 
-    @GetMapping("/{id}")
+    @GetMapping(EndpointConstants.SINGLE_PAGE)
     fun getById(
         @PathVariable id: Long,
     ): ResponseEntity<PassengerResponse> =
@@ -41,7 +38,7 @@ class PassengerController(
             .status(HttpStatus.OK)
             .body(passengerService.getById(id))
 
-    @PutMapping("/{id}")
+    @PutMapping(EndpointConstants.SINGLE_PAGE)
     fun updateById(
         @PathVariable id: Long,
         @RequestBody @Valid passengerRequest: PassengerRequest,
@@ -50,7 +47,7 @@ class PassengerController(
             .status(HttpStatus.OK)
             .body(passengerService.updateById(id, passengerRequest))
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(EndpointConstants.SINGLE_PAGE)
     fun deleteById(
         @PathVariable id: Long,
     ): ResponseEntity<PassengerResponse> =

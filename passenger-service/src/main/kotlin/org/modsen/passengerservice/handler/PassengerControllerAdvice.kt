@@ -1,6 +1,6 @@
 package org.modsen.passengerservice.handler
 
-import jakarta.validation.ConstraintViolationException
+import org.modsen.passengerservice.constants.MessageConstants
 import org.modsen.passengerservice.error.EmailAlreadyRegistered
 import org.modsen.passengerservice.error.PassengerNotFoundException
 import org.modsen.passengerservice.payload.general.ErrorResponse
@@ -28,7 +28,7 @@ class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
                 ErrorResponse(
                     code = HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     status = HttpStatus.INTERNAL_SERVER_ERROR,
-                    message = "Something went wrong!",
+                    message = MessageConstants.GENERAL_MESSAGE,
                     timestamp = Date(),
                 )
             )
@@ -70,7 +70,7 @@ class PassengerControllerAdvice : ResponseEntityExceptionHandler() {
                 ErrorResponse(
                     code = status.value(),
                     status = status,
-                    message = "There is no field '${ex.propertyName}'",
+                    message = MessageConstants.FIELD_NOT_FOUND(ex.propertyName),
                     timestamp = Date(),
                 )
             )
